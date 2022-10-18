@@ -19,6 +19,22 @@ module.exports = {
         })
     
         return response.json({id, name});
+    },
+
+    async delete(request, response){
+        const {id} = request.params;
+
+        const [incidents] = await connection('incidents')
+                .where('ong_id', id).count();
+
+
+        if(incidents['count(*)']>0){
+            return response.json('Delete os casos antes de deletar a Ong.');
+        }else{
+            await connection('ongs').where('id', id).delete()
+            return response.json('Ong '+id+' deletada.');
+        }
+        
     }
 
 }
